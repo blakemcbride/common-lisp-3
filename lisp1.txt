@@ -1,0 +1,199 @@
+
+Lisp1
+
+The problem:
+
+Common Lisp (CL) is a LISPn language.  This means that symbols can
+hold normal values, functions, property lists, etc. at the same time.
+Different functions are used to manipulate these different qualities
+associated to a given symbol.  The problem with this is that code
+becomes more complex and API's become large just to support these
+concurrent aspects.
+
+In real life using the same symbol to represent a function _and_ a
+value (in the form of a variable) at the same time would be really bad
+practice.  It would make the code very difficult to understand.  For
+this reason, programmers rarely do this.  So, in effect, CL has a lot
+of extra facilities and complexity just to support a feature that
+programmers generally avoid.
+
+LISP1 dialects associate a symbol with a single value.  This single
+value can be any value e.g. a number, a list, or a function.  Since
+functions are treated just like any other value, they can be passed or
+assigned as is any other value.  In effect, functions become first
+class citizens.
+
+(Historical note: CL is a LISPn language mainly for historical reasons
+- to be compatible with Lisp's that came before it, not necessarily
+because it was generally believed that LISPn was better - although
+opinions vary widely as to which is better.)
+
+For example, in CL one would have to write the following:
+
+--------------------------------------------------------------------------------
+
+(defun add (a b)
+        (+ a b))
+
+(defun subtract (a b)
+        (- a b))
+
+(defun perform-function (fun a b)
+        (funcall fun a b))
+
+(perform-function (function add) 5 6)
+
+(perform-function (function subtract) 10 3)
+
+--------------------------------------------------------------------------------
+
+If, on the other hand CL was a LISP1 language you could just do the following:
+
+--------------------------------------------------------------------------------
+
+(defun add (a b)
+        (+ a b))
+
+(defun subtract (a b)
+        (- a b))
+
+(defun perform-function (fun a b)
+        (fun a b))
+
+(perform-function add 5 6)
+
+(perform-function subtract 10 3)
+
+--------------------------------------------------------------------------------
+
+Note the differences between the definition of perform-function, and
+note the difference in how perform-function is used.  In fact, in a
+LISP1 dialect you can even do the following:
+
+--------------------------------------------------------------------------------
+
+(defun add (a b)
+        (+ a b))
+
+(setq myadd add)
+
+(myadd 5 6)
+
+(let ((a 5)
+      (b 10)
+      (fun (lambda (x y) (+ x y))))
+   (fun a b))
+
+(setq another-add (lambda (a b) (+ a b)))
+
+(another-add 5 6)
+
+--------------------------------------------------------------------------------
+
+There shouldn't be a need for flet, function, symbol-value, funcall or
+even defun.
+
+Scheme is a LISP1 dialect of Lisp, but Scheme suffers from a different
+set of problems including no standard object system, no standard
+module or package system, an inadequate library of functions, a macro
+system that requires a Phd to understand and use effectively, and,
+surprisingly, the fact that () and #f are treated differently (a topic
+of an article I posted).
+
+This library is intended to give CL the only really nice feature (IMO)
+that another language has to offer - LISP1 semantics.
+
+================================================================================
+
+Lisp1 has been tested with the following Lisp systems:
+    CLISP
+    SBCL
+    ABCL
+    ECL
+
+Lisp1 mainly adds four macros to the Common Lisp environment, DEFINE,
+DEFINE-MACRO, DEFINE-METHOD, and LISP1.  DEFINE is analogous to
+DEFPARAMETER only it is used to define variables AND functions.
+Functions are defined as lambda expressions.  So, for example, if in
+CL you say:
+
+    (defparameter myvar 66)
+
+You would now say:
+
+    (define myvar 66)
+
+In CL you would say:
+
+    (defun myfun (a b)
+      (+ a b))
+
+You would now write:
+
+    (define myfun
+      (lambda (a b)
+        (+ a b)))
+
+DEFINE-MACRO is for defining macros and works just like DEFMACRO.
+
+DEFINE-METHOD is for defining methods and works just like DEFMETHOD.
+
+LISP1 is a macro which executes the code inside (in a PROGN form) in a
+LISP1 environment.  This is needed when executing code at the top
+level which is not part of a function or macro.  For example:
+
+    (lisp1
+     (let ((fun (lambda (a b)
+    	      (+ a b))))
+       (fun 3 4)))
+
+So long as this package is loaded, the normal Lisp compiler and image
+save / load should work with the underlying Lisp system.  Overhead
+should be very, very minimal or totally non-existent depending on the
+underlying system implementation.  There should be no limitations or
+restrictions on the underlying system.  Lisp1 converts everything from
+LISP1 to CL as it is read in or defined and only has to do this once
+so, again, the overhead should be virtually non-existent.
+
+Lisp1 consists of a single source file (lisp1.lisp).  It can be loaded
+or compiled and loaded like any other lisp program.  It is in its own
+package so shouldn't interfere with anything else.  So, to load use:
+
+    (load "lisp1")
+    (use-package "LISP1")
+
+New user packages need to call:
+
+    (use-package "LISP1")
+
+in order to gain access to the exported functions.
+
+================================================================================
+
+See examples.lisp for some examples.
+
+================================================================================
+
+Concerns:
+
+1.  I have tested the system with macros and back-quote but not well
+enough I fear.
+
+2.  The system handles the majority of CL primitives including many I
+had to write special handlers for.  There are surely some (many?) I've
+missed.
+
+3.  I have only addressed functions and ignored property lists, etc.
+CL already has facilities to handle property lists in a LISP1 way
+without mucking up the language.  Other bindings are of much less use
+and problem.
+
+On the plus side, once discovered, any shortcoming should be easy to
+correct.
+
+Please feel free with questions, comments, and improvements.
+
+Blake McBride
+blake@mcbridemail.com
+
+EOF
