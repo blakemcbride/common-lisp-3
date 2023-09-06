@@ -24,7 +24,7 @@ easier to do the things that most programmers do most of the time.
 This repository contains code that adds items 1, 2, and 3 to ANSI
 Common Lisp.
 
-** This code has problems and will be corrected when time permits. **
+**This code has problems and will be corrected when time permits.**
 
 Items 4 and 5 are already a part of the SBCL Common Lisp implementation.
 
