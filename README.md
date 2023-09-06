@@ -13,7 +13,7 @@ functional programming.
 
 2. CLOS is too low-level and inflexible for use by the common
 developer.  Common Lisp 3 adds a simpler and more coventional object
-ode similar to a multiple-inheritance version of Java or Smalltalk.
+model similar to a multiple-inheritance version of Java or Smalltalk.
 This makes it easier to do the things that most programmers do most of
 the time.
 
