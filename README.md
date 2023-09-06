@@ -11,9 +11,11 @@ Common Lisp 3 consists of ANSI Common Lisp with the following changes:
 namespace. This simplifies the language and makes it easier to perform
 functional programming.
 
-2. Although CLOS is untouched, Common Lisp 3 adds a layer on top of CLOS
-that facilitates the creation of object-oriented code.  This makes it
-easier to do the things that most programmers do most of the time.
+2. CLOS is too low-level and inflexible for use by the common
+developer.  Common Lisp 3 adds a simpler and more coventional object
+ode similar to a multiple-inheritance version of Java or Smalltalk.
+This makes it easier to do the things that most programmers do most of
+the time.
 
 3. Common Lisp 3 supports case-sensitive symbols.
 
@@ -21,12 +23,12 @@ easier to do the things that most programmers do most of the time.
 
 5. Common Lisp 3 supports tail recursion elimination.
 
-This repository contains code that adds items 1, 2, and 3 to ANSI
+This repository contains code that adds items 2, and 3 to ANSI
 Common Lisp.
 
-**This code has problems and will be corrected when time permits.**
-
 Items 4 and 5 are already a part of the SBCL Common Lisp implementation.
+
+Item 1 is a work in progress.
 
 ## Usage
 

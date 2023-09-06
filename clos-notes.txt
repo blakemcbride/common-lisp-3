@@ -42,20 +42,12 @@ variables (slots).
 programmers from other OO languages.
 
 This code has been tested on:
-	CLISP 2.46 & 2.49.93+
-	SBCL 1.0.16 & 1.4.5
-	CMUCL 19e & 21c
-	ECL 0.9k & 16.1.3
-	GCL 2.6.12
-	ABCL 1.6.0
-	CCL 1.11.5
-	MKCL 1.1.10
+	CLISP
+	SBCL
+	CMUCL
+	ECL
+	GCL
+	ABCL
+	CCL
+	MKCL
 
-Files in this package include:
-
-README		this file
-clos-utils.lisp	the source code
-tutorial.txt	the tutorial
-
-
--- EOF

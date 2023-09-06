@@ -23,27 +23,27 @@ to create a class is outlined as follows:
 
 For example:
 
-(define-class myclass () (cv1) (iv1 iv2))
+(define-class my-class () (cv1) (iv1 iv2))
 
-This creates a class named 'myclass' with one class variable (slot)
+This creates a class named 'my-class' with one class variable (slot)
 named 'cv1' and two instance variables (slots) named 'iv1' and 'iv2'.
 
-A sub-class of myclass can be created as follows:
+A sub-class of my-class can be created as follows:
 
-(define-class mysubclass (myclass) (cv2) (iv3))
+(define-class mysubclass (my-class) (cv2) (iv3))
 
-This creates a class 'mysubclass' which is a sub-class of 'myclass',
+This creates a class 'mysubclass' which is a sub-class of 'my-class',
 adds a class variable (slot) named 'cv2', and an instance variable
 (slot) named 'iv3'.  Because of inheritance, instances of mysubclass
 would three instance variables iv1, iv2 and iv3.  Mysubclass has a
 class variable 'cv2' and shares a class variable 'cv1' with the
-myclass class.
+my-class class.
 
 2.  Creating instances
 
-Create a variable i1 to contain an instance of myclass:
+Create a variable i1 to contain an instance of my-class:
 
-(defparameter i1 (make-instance myclass))
+(defparameter i1 (make-instance my-class))
 
 Create a variable i2 to contain an instance of mysubclass:
 
@@ -53,32 +53,32 @@ Create a variable i2 to contain an instance of mysubclass:
 
 Set slot 'iv1' of instance 'i1' to 55:
 
-(set-slot i1 iv1 55)
+(set-slot i1 'iv1 55)
 
 Get the value of slot 'iv1' of instance 'i1':
 
-(get-slot i1 iv1)
+(get-slot i1 'iv1)
 
 4.  Setting and getting class variables
 
-Set slot 'cv1' of class 'myclass' to 32:
+Set slot 'cv1' of class 'my-class' to 32:
 
-(set-slot myclass cv1 32)
+(set-slot my-class 'cv1 32)
 
-Get slot 'cv1' from class 'myclass':
+Get slot 'cv1' from class 'my-class':
 
-(get-slot myclass cv1)
+(get-slot my-class 'cv1)
 
 
 5.  Creating an instance method
 
 The following creates an instance method named 'addiv' that takes two
 arguments named 'ins' and 'val'.  The 'ins' argument is expected to be
-an instance of 'myclass' or one of its sub-classes.  This method simply
+an instance of 'my-class' or one of its sub-classes.  This method simply
 adds val to the the value of the instances' instance variable 'iv1'.
 
-(defmethod addiv ((ins myclass) val)
-    (+ (get-slot ins iv1) val))
+(defmethod addiv ((ins my-class) val)
+    (+ (get-slot ins 'iv1) val))
 
 The new method can be used as follows:
 
@@ -87,16 +87,16 @@ The new method can be used as follows:
 6.  Creating a class method
 
 The following creates a class method named 'addcv' that takes two
-arguments named 'ins' and 'val'.  The 'ins' argument is expected to be
-the class object 'myclass' or one of its sub-classes.  This method simply
+arguments named 'cls' and 'val'.  The 'cls' argument is expected to be
+the class object 'my-class' or one of its sub-classes.  This method simply
 adds val to the the value of the class' instance variable 'cv1'.
 
-(defmethod addcv ((ins meta-myclass) val)
-    (+ (get-slot ins cv1) val))
+(defmethod addcv ((cls my-class) val)
+    (+ (get-slot cls 'cv1) val))
 
 The new method can be used as follows:
 
-(addcv myclass 42)
+(addcv my-class 42)
 
 7.  Other facilities
 
@@ -104,27 +104,27 @@ Returns the class of an (class or instance) object
 
 (class-of i1)
 
-(class-of myclass)
+(class-of my-class)
 
 Find a class object from its name:
 
-(find-class 'myclass)
+(find-class 'my-class)
 
 Get a class' name:
 
-(class-name myclass)
+(class-name my-class)
 
 Get the name of an object's class:
 
 (type-of i1)
 
-Access slots as local variables:
+Access instance slots as local variables:
 
 (with-slots (iv1 iv2) i1
    (setq iv1 17)
    (setq iv2 49))
 
-CLOS standard way of accessing slots:
+CLOS standard way of accessing instance slots:
 
 (slot-value i1 'iv1)
 

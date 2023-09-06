@@ -5,49 +5,46 @@
 ;        Blake McBride
 ;        blake@mcbridemail.com
 ;
-;  Version / Release 9/5/2023
+;  Version / Release 9/6/2023
 ;
 
+(defvar *class-instances* (make-hash-table :test #'eq))
 
-(defmacro set-slot (i s v)
-  `(setf (slot-value ,i ',s) ,v))
-
-(defmacro get-slot (i s)
-  `(slot-value ,i ',s))
-
-(defun validate-superclass (class superclass)
-  t)
-
-(defclass metaclass (standard-class) ())
-
-(defmacro define-class (class-name super-class-list class-variables instance-variables)
-  "define-class defines a CLOS class with a parallel meta-class structure ala Smalltalk."
-  (flet ((add-meta (sym)
-		   (intern (concatenate 'string "META-" (symbol-name sym))))
-	 (make-global (x)
-		      (if (consp x)
-			  (append x '(:allocation :class))
-			(cons x '(:allocation :class)))))
-    ;; Validate superclass relationship
-    (mapc (lambda (sc)
-            (unless (validate-superclass class-name sc)
-              (error "Invalid superclass relationship between ~S and ~S" class-name sc)))
-          super-class-list)
+(defmacro define-class (name super-class-list class-variables instance-variables)
+  "A macro to define a class and its parallel hierarchy."
+  (let ((parallel-class-name (intern (concatenate 'string "CLASS-" (string name))))
+        (parallel-super-class-list (mapcar (lambda (super) 
+                                             (intern (concatenate 'string "CLASS-" (string super))))
+                                           super-class-list)))
     `(progn
-       (defclass ,(add-meta class-name)
-	 ,(if (null super-class-list)
-	      '(metaclass)
-	    (mapcar #'add-meta super-class-list))
-	 ,(mapcar #'make-global class-variables)
-	 (:metaclass metaclass))
-       (defclass ,class-name
-	 ,(if (null super-class-list)
-	      '(standard-object)
-	    super-class-list)
-	 ,instance-variables
-	 (:metaclass ,(add-meta class-name)))
-       (defvar ,class-name (find-class ',class-name))
-       )))
+       ;; Define the parallel class
+       (defvar ,parallel-class-name (defclass ,parallel-class-name ,parallel-super-class-list
+		  ,class-variables))
+       
+       ;; Define the primary class
+       (defvar ,name (defclass ,name ,super-class-list
+                            (,@instance-variables
+                             (class :initform (find-class ',parallel-class-name)))))
+       
+       ;; Initialize the instance table for the class
+       (setf (gethash ,name *class-instances*)
+             (make-instance (find-class ',parallel-class-name)))
+       ,name)))
+
+(defun get-class-object (cls)
+  (gethash cls *class-instances*))
+
+(defun get-slot (obj slot)
+  (if (typep obj 'standard-class)
+      (let ((ins (get-class-object obj)))
+	(slot-value ins slot))
+      (slot-value obj slot)))
+
+(defun set-slot (obj slot val)
+  (if (typep obj 'standard-class)
+      (let ((ins (get-class-object obj)))
+	(setf (slot-value ins slot) val))
+      (setf (slot-value obj slot) val)))
 
 (defmacro define-method (method-name class-name arg-list &rest body)
   "define-method defines a fixed argument method and associates it to a variable argument generic.
