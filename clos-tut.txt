@@ -1,0 +1,155 @@
+
+CLOS Tutorial when used with the clos-utils.lisp package.
+
+Written by Blake McBride (blake@mcbridemail.com)
+
+This tutorial assumes you know OO concepts coming from the Smalltalk,
+Objective-C, C++, Java, or C# world.  It also assumes you have a
+working knowledge of Common Lisp but little understanding of CLOS.
+
+This tutorial assumes you have loaded clos-utils.lisp like:
+    (load "clos-utils")
+
+1.  Class creation.
+
+CLOS supports multiple inheritance.  The order of the super classes
+specified determines the order that methods are searched.  The way
+to create a class is outlined as follows:
+
+(define-class class-name
+           (super-class-list)
+	   (class-variables)
+	   (instance-variables))
+
+For example:
+
+(define-class myclass () (cv1) (iv1 iv2))
+
+This creates a class named 'myclass' with one class variable (slot)
+named 'cv1' and two instance variables (slots) named 'iv1' and 'iv2'.
+
+A sub-class of myclass can be created as follows:
+
+(define-class mysubclass (myclass) (cv2) (iv3))
+
+This creates a class 'mysubclass' which is a sub-class of 'myclass',
+adds a class variable (slot) named 'cv2', and an instance variable
+(slot) named 'iv3'.  Because of inheritance, instances of mysubclass
+would three instance variables iv1, iv2 and iv3.  Mysubclass has a
+class variable 'cv2' and shares a class variable 'cv1' with the
+myclass class.
+
+2.  Creating instances
+
+Create a variable i1 to contain an instance of myclass:
+
+(defparameter i1 (make-instance myclass))
+
+Create a variable i2 to contain an instance of mysubclass:
+
+(defparameter i2 (make-instance mysubclass))
+
+3.  Setting and getting instance variables
+
+Set slot 'iv1' of instance 'i1' to 55:
+
+(set-slot i1 iv1 55)
+
+Get the value of slot 'iv1' of instance 'i1':
+
+(get-slot i1 iv1)
+
+4.  Setting and getting class variables
+
+Set slot 'cv1' of class 'myclass' to 32:
+
+(set-slot myclass cv1 32)
+
+Get slot 'cv1' from class 'myclass':
+
+(get-slot myclass cv1)
+
+
+5.  Creating an instance method
+
+The following creates an instance method named 'addiv' that takes two
+arguments named 'ins' and 'val'.  The 'ins' argument is expected to be
+an instance of 'myclass' or one of its sub-classes.  This method simply
+adds val to the the value of the instances' instance variable 'iv1'.
+
+(defmethod addiv ((ins myclass) val)
+    (+ (get-slot ins iv1) val))
+
+The new method can be used as follows:
+
+(addiv i1 72)
+
+6.  Creating a class method
+
+The following creates a class method named 'addcv' that takes two
+arguments named 'ins' and 'val'.  The 'ins' argument is expected to be
+the class object 'myclass' or one of its sub-classes.  This method simply
+adds val to the the value of the class' instance variable 'cv1'.
+
+(defmethod addcv ((ins meta-myclass) val)
+    (+ (get-slot ins cv1) val))
+
+The new method can be used as follows:
+
+(addcv myclass 42)
+
+7.  Other facilities
+
+Returns the class of an (class or instance) object
+
+(class-of i1)
+
+(class-of myclass)
+
+Find a class object from its name:
+
+(find-class 'myclass)
+
+Get a class' name:
+
+(class-name myclass)
+
+Get the name of an object's class:
+
+(type-of i1)
+
+Access slots as local variables:
+
+(with-slots (iv1 iv2) i1
+   (setq iv1 17)
+   (setq iv2 49))
+
+CLOS standard way of accessing slots:
+
+(slot-value i1 'iv1)
+
+(setf (slot-value i1 'iv1) 32)
+
+8.  Create a class with default slot values:
+
+(define-class newclass ()
+    ((cv1 :initform 42))
+    ((iv1 :initform 36)
+     (iv2 :initform 11)))
+
+9.  Create a class with named initial values
+
+(define-class class2 () ()
+   ((iv1 :initarg :val)))
+
+To use do:
+
+(make-instance class2 :val 66)
+
+This will create a new instance with iv1 set to 66.
+
+     
+10.  Instance initialization method
+
+(define-method allocate-instance :after ((class meta-class1) &key)
+  ...)
