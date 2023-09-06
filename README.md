@@ -47,9 +47,6 @@ This code works on:
 * CLISP
 * ABCL
 * CCL
-
-It is known not to work on:
-
 * ECL
 * MKCL
 

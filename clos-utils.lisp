@@ -15,13 +15,10 @@
 (defmacro get-slot (i s)
   `(slot-value ,i ',s))
 
-(defclass metaclass (standard-class) ())
+(defun validate-superclass (class superclass)
+  t)
 
-#+sbcl           (defmethod sb-mop:validate-superclass ((class metaclass) (superclass standard-class)) t)
-#+(or cmu gcl)   (defmethod pcl:validate-superclass ((class metaclass) (superclass standard-class)) t)
-#+abcl           (defmethod mop:validate-superclass ((class metaclass) (superclass standard-class)) t)
-#+ccl            (defmethod ccl:validate-superclass ((class metaclass) (superclass standard-class)) t)
-#+(or ecl mkcl)  (error "This system does not work in ECL or MKCL")
+(defclass metaclass (standard-class) ())
 
 (defmacro define-class (class-name super-class-list class-variables instance-variables)
   "define-class defines a CLOS class with a parallel meta-class structure ala Smalltalk."
@@ -31,22 +28,26 @@
 		      (if (consp x)
 			  (append x '(:allocation :class))
 			(cons x '(:allocation :class)))))
-	`(progn
-	   (defclass ,(add-meta class-name)
-	     ,(if (null super-class-list)
-		  '(metaclass)
-		(mapcar #'add-meta super-class-list))
-	     ,(mapcar #'make-global class-variables)
-	     (:metaclass metaclass))
-	   (defclass ,class-name
-	     ,(if (null super-class-list)
-		  '(standard-object)
-		super-class-list)
-	     ,instance-variables
-	     (:metaclass ,(add-meta class-name)))
-	   (defvar ,class-name (find-class ',class-name))
-;          (defvar ,(add-meta class-name) (find-class ',(add-meta class-name)))
-	   )))
+    ;; Validate superclass relationship
+    (mapc (lambda (sc)
+            (unless (validate-superclass class-name sc)
+              (error "Invalid superclass relationship between ~S and ~S" class-name sc)))
+          super-class-list)
+    `(progn
+       (defclass ,(add-meta class-name)
+	 ,(if (null super-class-list)
+	      '(metaclass)
+	    (mapcar #'add-meta super-class-list))
+	 ,(mapcar #'make-global class-variables)
+	 (:metaclass metaclass))
+       (defclass ,class-name
+	 ,(if (null super-class-list)
+	      '(standard-object)
+	    super-class-list)
+	 ,instance-variables
+	 (:metaclass ,(add-meta class-name)))
+       (defvar ,class-name (find-class ',class-name))
+       )))
 
 (defmacro define-method (method-name class-name arg-list &rest body)
   "define-method defines a fixed argument method and associates it to a variable argument generic.
