@@ -1,0 +1,61 @@
+Code to make Common Lisp CLOS work like Smalltalk
+(with multiple inheritance and other features associated with CLOS)
+
+Written by:
+      Blake McBride
+      blake@mcbridemail.com
+
+CLOS provides a powerful framework for developing OO applications.  The
+problem is that this framework is at just slightly too low a level to
+make it easily understandable and usable by programmers familiar with
+OO concepts but unfamiliar with the CLOS machinery.  This package
+attempts to remedy the situation by emulating the Smalltalk way of
+creating classes taking full advantage of CLOS' reflection ability and
+without losing any of CLOS' powerful facilities such as multiple
+inheritance and multi-methods.
+
+More specifically, when a hierarchy of classes is created in
+Smalltalk, it automatically creates a corresponding meta-class
+hierarchy.  Classes define instance variables (slots) and instance
+methods, and the meta-classes define class variables and class
+methods.  Given the low level machinery of standard CLOS,
+accomplishing this same (industry standard) functionality is
+cumbersome and confusing.  This package attempts to remedy this
+situation as well as provide a bit of a tutorial for CLOS.
+
+This package makes the creation of independent class and instance
+variables and slots easy and clear.
+
+This package does the following:
+
+1.  When creating a class hierarchy, a corresponding meta class
+hierarchy is created making the specification of class and instance
+variables (slots) and class and instance methods easy and clear.
+
+2.  Class creation creates global variables with the created class
+name containing the class.
+
+3.  Creation of some convenience macros to set/get instance and class
+variables (slots).
+
+4.  Creation of a tutorial to render CLOS easily accessible to
+programmers from other OO languages.
+
+This code has been tested on:
+	CLISP 2.46 & 2.49.93+
+	SBCL 1.0.16 & 1.4.5
+	CMUCL 19e & 21c
+	ECL 0.9k & 16.1.3
+	GCL 2.6.12
+	ABCL 1.6.0
+	CCL 1.11.5
+	MKCL 1.1.10
+
+Files in this package include:
+
+README		this file
+clos-utils.lisp	the source code
+tutorial.txt	the tutorial
+
+
+-- EOF
