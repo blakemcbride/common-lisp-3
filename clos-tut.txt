@@ -91,7 +91,7 @@ arguments named 'cls' and 'val'.  The 'cls' argument is expected to be
 the class object 'my-class' or one of its sub-classes.  This method simply
 adds val to the the value of the class' instance variable 'cv1'.
 
-(defmethod addcv ((cls my-class) val)
+(defmethod addcv ((cls (eql my-class)) val)
     (+ (get-slot cls 'cv1) val))
 
 The new method can be used as follows:
