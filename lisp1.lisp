@@ -48,7 +48,7 @@
 (defmacro define-macro (name args &rest rest)
   (cons 'defmacro (cons name (cons args (convert-progn rest)))))
 
-(defmacro define-method (name args &rest rest)
+(defmacro define-meth (name args &rest rest)
   `(progn
      ,(cons 'defmethod (cons name (cons args (convert-progn rest))))
      (defparameter ,name (symbol-function ',name))
