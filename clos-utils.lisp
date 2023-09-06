@@ -7,7 +7,6 @@
 ;
 ;  Version / Release 9/5/2023
 ;
-;  Donated to the public domain.
 
 
 (defmacro set-slot (i s v)
