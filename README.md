@@ -56,6 +56,6 @@ It is known that a comprehensive manual is needed.
 
 ## Source
 
-The source code for this system is located at https://github.com/blakemcbride/common-lisp-3
+The source code for this system is located at [https://github.com/blakemcbride/common-lisp-3](https://github.com/blakemcbride/common-lisp-3)
 
 It was written by Blake McBride (blake@mcbridemail.com)
